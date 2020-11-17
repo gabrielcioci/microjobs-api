@@ -8,7 +8,7 @@ const name = Joi.string()
 
 const password = Joi.string()
     .pattern(passPattern) // Password Pattern
-    .message('Parola nu este validă') // Error message when password is not valid
+    .message('Parola trebuie sa conțină minim 8 caractere, litere și cifre.') // Error message when password is not valid
     .required()
 
 const loginPassword = Joi.string()
@@ -21,13 +21,13 @@ const email = Joi.string()
     .required()
 
 const jobDescription = Joi.string()
-    .min(20)
-    .message('Descrierea trebuie sa aiba minim 20 de caractere')
+    .min(15)
+    .message('Descrierea trebuie sa aiba minim 15 de caractere')
     .required()
 
 const jobTitle = Joi.string()
-    .min(5)
-    .message('Titlul trebuie sa aiba minim 5 caractere')
+    .min(3)
+    .message('Titlul trebuie sa aiba minim 3 caractere')
     .required()
 
 const jobTags = Joi.array()
