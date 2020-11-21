@@ -7,6 +7,7 @@ const JobSchema = new Schema({
     tags: {type: Array},
     location: {type: Object},
     duration: {type: Number, required: true},
+    reward: {type: Number, required: true},
     date: {type: Date, required: true},
     reviewed: {type: Boolean, default: false},
     postedBy: {type: String, required: true}

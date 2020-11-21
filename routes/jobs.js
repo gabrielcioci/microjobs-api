@@ -58,6 +58,7 @@ router.post('/update/:id', auth, (req, res) => {
             job.location = req.body.location;
             job.reviewed = req.body.reviewed;
             job.postedBy = req.body.postedBy;
+            job.reward = req.body.reward;
 
             job.save()
                 .then(() => res.json('Job updated!'))
@@ -88,8 +89,9 @@ router.post('/add', auth, (req, res) => {
     const location = req.body.location;
     const reviewed = req.body.reviewed;
     const postedBy = req.body.postedBy;
+    const reward = req.body.reward;
 
-    const newJob = new Job({title, description, duration, date, tags, location, reviewed, postedBy});
+    const newJob = new Job({title, description, duration, date, tags, location, reviewed, postedBy, reward});
     newJob.save()
         .then(() => res.json('Job added!'))
         .catch(err => res.status(400).json('Error:' + err));
