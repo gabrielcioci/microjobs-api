@@ -3,7 +3,7 @@ const Joi = require('joi')
 
 module.exports = Joi.object({
     title: basicValidators.jobTitle,
-    description: basicValidators.jobDescription,
+    description: basicValidators.description,
     tags: basicValidators.jobTags,
 }).unknown()
 

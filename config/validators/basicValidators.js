@@ -17,12 +17,17 @@ const loginPassword = Joi.string()
 const email = Joi.string()
     .trim()
     .email()
-    .message('Email-ul nu este valid') // Error message when password is not valid
+    .message('Email-ul nu este valid')
     .required()
 
-const jobDescription = Joi.string()
-    .min(15)
-    .message('Descrierea trebuie sa aiba minim 15 de caractere')
+const description = Joi.string()
+    .min(10)
+    .message('Descrierea trebuie sa aiba minim 10 caractere')
+    .required()
+
+const category = Joi.string()
+    .min(1)
+    .message('Selectează o categorie')
     .required()
 
 const jobTitle = Joi.string()
@@ -40,8 +45,9 @@ module.exports = {
     password,
     loginPassword,
     email,
-    jobDescription,
+    description,
     jobTitle,
     jobTags,
+    category
 }
 

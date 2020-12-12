@@ -27,12 +27,14 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 const registerRouter = require('./routes/register');
 const activationRouter = require('./routes/activation')
+const supportRouter = require('./routes/support')
 
 app.use('/api/jobs', jobsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/activation', activationRouter);
+app.use('/api/support', supportRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
