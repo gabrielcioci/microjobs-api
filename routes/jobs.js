@@ -43,28 +43,31 @@ router.delete('/:id', auth, (req, res) => {
         .catch(err => res.status(400).json('Error:' + err))
 });
 
-// @route UPDATE /api/jobs/update/id
-// @desc Update job by ID
+// @route POST /api/jobs/accept/id
+// @desc Accept job by ID
 // @access Private
 
-router.post('/update/:id', auth, (req, res) => {
-    Job.findById(req.params.id)
-        .then(job => {
-            job.title = req.body.title;
-            job.description = req.body.description;
-            job.duration = Number(req.body.duration);
-            job.date = Date.parse(req.body.date);
-            job.tags = req.body.tags;
-            job.location = req.body.location;
-            job.reviewed = req.body.reviewed;
-            job.postedBy = req.body.postedBy;
-            job.reward = req.body.reward;
 
-            job.save()
-                .then(() => res.json('Job updated!'))
-                .catch(err => res.status(400).json('Error:' + err));
-        })
-        .catch(err => res.status(400).json('Error:' + err));
+router.post('/accept/:id', auth, async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id)
+        if (!job)
+            return res.status(400).json({message: 'Jobul nu exista.'})
+        const {title, description, duration, date, tags, location, postedBy, reward} = job
+        job.title = title;
+        job.description = description;
+        job.duration = duration;
+        job.date = date;
+        job.tags = tags;
+        job.location = location;
+        job.reviewed = true;
+        job.postedBy = postedBy;
+        job.reward = reward;
+        await job.save()
+        res.json({message: 'Job updated!'})
+    } catch (err) {
+        return res.status(400).json({message: 'Jobul nu poate fi acceptat.'})
+    }
 });
 
 // @route POST /api/jobs/add
