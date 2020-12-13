@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 
-const sendConfirmationEmail = function(user) {
+const sendConfirmationEmail = function (user) {
     return new Promise((res, rej) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -21,10 +21,10 @@ const sendConfirmationEmail = function(user) {
             <p>Pentru a-ți activa contul, fă click pe următorul link: <a target="_blank" style="color:#667eea" href="${process.env.DOMAIN}/activation/user/${user._id}">Activare cont</a></p>
             <p style="color:#a0aec0">Echipa <span style="font-weight:bold">Microjobs România</span></p>`
         }
-        transporter.sendMail(message,function(err,info){
-            if(err) {
+        transporter.sendMail(message, function (err, info) {
+            if (err) {
                 rej(err)
-            }else {
+            } else {
                 res(info);
             }
         })

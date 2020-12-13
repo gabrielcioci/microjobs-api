@@ -8,7 +8,7 @@ const validators = require('../config/validators')
 // @access Public
 
 router.get('/', (req, res) => {
-    Job.find({reviewed: true}).sort({createdAt: 'desc'})
+    Job.find({reviewed: true, completed: false}).sort({createdAt: 'desc'})
         .then(jobs => res.json(jobs))
         .catch(err => res.status(400).json('Error:' + err))
 });
@@ -67,6 +67,35 @@ router.post('/accept/:id', auth, async (req, res) => {
         res.json({message: 'Job updated!'})
     } catch (err) {
         return res.status(400).json({message: 'Jobul nu poate fi acceptat.'})
+    }
+});
+
+
+// @route POST /api/jobs/complete/id
+// @desc Complete job by ID
+// @access Private
+
+
+router.post('/complete/:id', auth, async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id)
+        if (!job)
+            return res.status(400).json({message: 'Jobul nu exista.'})
+        const {title, description, duration, date, tags, location, reviewed, postedBy, reward} = job
+        job.title = title;
+        job.description = description;
+        job.duration = duration;
+        job.date = date;
+        job.tags = tags;
+        job.location = location;
+        job.reviewed = reviewed;
+        job.postedBy = postedBy;
+        job.reward = reward;
+        job.completed = true;
+        await job.save()
+        res.json({message: 'Job completat cu success!'})
+    } catch (err) {
+        return res.status(400).json({message: 'Jobul nu poate fi completat.'})
     }
 });
 
