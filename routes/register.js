@@ -9,7 +9,7 @@ const sendConfirmationEmail = require('../config/mailer')
 // @access Public
 
 router.post('/', async (req, res) => {
-    const {name, email, password, phone} = req.body;
+    const {name, email, password} = req.body;
 
     // Stop if request is not valid
     const {error, value} = validators.register.validate(req.body)
@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
         return res.status(400).json({message: 'Utilizatorul există deja'})
     // Create user
     try {
-        const newPendingUser = new User({name, email, password, phone});
+        const newPendingUser = new User({name, email, password});
         // Create salt & hash
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(newPendingUser.password, salt, async (err, hash) => {

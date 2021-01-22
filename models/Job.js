@@ -8,6 +8,7 @@ const JobSchema = new Schema({
     location: {type: Object},
     duration: {type: Number, required: true},
     reward: {type: Number, required: true},
+    phone: {type: String, required: true},
     date: {type: Date, required: true},
     reviewed: {type: Boolean, default: false},
     completed: {type: Boolean, default: false},

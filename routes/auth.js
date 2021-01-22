@@ -4,9 +4,12 @@ const bcrypt = require('bcryptjs');
 let User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
+const {OAuth2Client} = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 // @route POST /api/auth/
-// @desc Logins
+// @desc Login
 // @access Public
 
 router.post('/', (req, res) => {
@@ -34,7 +37,7 @@ router.post('/', (req, res) => {
                     jwt.sign(
                         {id: user.id},
                         process.env.jwtSecret,
-                        {expiresIn: 3600},
+                        {expiresIn: '1d'},
                         (err, token) => {
                             if (err) throw err;
                             res.json({
@@ -42,13 +45,70 @@ router.post('/', (req, res) => {
                                 _id: user.id,
                                 name: user.name,
                                 email: user.email,
-                                phone: user.phone
                             })
                         }
                     )
                 })
         })
 });
+
+// @route POST /api/auth/googlelogin
+// @desc Google Login
+// @access Public
+
+router.post('/googlelogin', (req, res) => {
+    const {tokenId} = req.body;
+    client.verifyIdToken({idToken: tokenId, audience: process.env.GOOGLE_CLIENT_ID})
+        .then(response => {
+            const {email_verified, name, email} = response.payload
+            if (!email_verified) return res.status(400).json({message: "Email-ul nu a fost confirmat încă"})
+            User.findOne({email})
+                .then(user => {
+                    if (user) {
+                        jwt.sign(
+                            {id: user.id},
+                            process.env.jwtSecret,
+                            {expiresIn: '1d'},
+                            (err, token) => {
+                                if (err) throw err;
+                                res.json({
+                                    token,
+                                    _id: user.id,
+                                    name: user.name,
+                                    email: user.email,
+                                })
+                            }
+                        )
+                    } else {
+                        let password = email + process.env.jwtSecret;
+                        let newUser = new User({name, email, password, confirmed_email: email_verified})
+                        // Create salt & hash
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(newUser.password, salt, async (err, hash) => {
+                                if (err) throw err;
+                                newUser.password = hash;
+                                await newUser.save()
+                                jwt.sign(
+                                    {id: newUser.id},
+                                    process.env.jwtSecret,
+                                    {expiresIn: '1d'},
+                                    (err, token) => {
+                                        if (err) throw err;
+                                        res.json({
+                                            token,
+                                            _id: newUser.id,
+                                            name: newUser.name,
+                                            email: newUser.email,
+                                        })
+                                    }
+                                )
+                            })
+                        })
+                    }
+                })
+        })
+})
+
 
 // @route GET /api/auth/user
 // @desc Get user data

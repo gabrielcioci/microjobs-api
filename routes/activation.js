@@ -10,11 +10,10 @@ router.post('/user/:id', async (req, res) => {
         const user = await User.findById(req.params.id)
         if (!user)
             return res.status(400).json({message: 'Contul nu poate fi activat.'})
-        const {name, email, password, phone} = user
+        const {name, email, password} = user
         user.name = name;
         user.email = email;
         user.password = password;
-        user.phone = phone;
         user.confirmed_email = true;
         await user.save()
         res.json({message: 'Felicitări! Contul a fost activat cu succes.'})

@@ -53,12 +53,13 @@ router.post('/accept/:id', auth, async (req, res) => {
         const job = await Job.findById(req.params.id)
         if (!job)
             return res.status(400).json({message: 'Jobul nu exista.'})
-        const {title, description, duration, date, tags, location, postedBy, reward} = job
+        const {title, description, phone, duration, date, tags, location, postedBy, reward} = job
         job.title = title;
         job.description = description;
         job.duration = duration;
         job.date = date;
         job.tags = tags;
+        job.phone = phone;
         job.location = location;
         job.reviewed = true;
         job.postedBy = postedBy;
@@ -81,12 +82,13 @@ router.post('/complete/:id', auth, async (req, res) => {
         const job = await Job.findById(req.params.id)
         if (!job)
             return res.status(400).json({message: 'Jobul nu exista.'})
-        const {title, description, duration, date, tags, location, reviewed, postedBy, reward} = job
+        const {title, description, phone, duration, date, tags, location, reviewed, postedBy, reward} = job
         job.title = title;
         job.description = description;
         job.duration = duration;
         job.date = date;
         job.tags = tags;
+        job.phone = phone;
         job.location = location;
         job.reviewed = reviewed;
         job.postedBy = postedBy;
@@ -118,12 +120,13 @@ router.post('/add', auth, (req, res) => {
     const duration = Number(req.body.duration);
     const date = Date.parse(req.body.date);
     const tags = req.body.tags;
+    const phone = req.body.phone;
     const location = req.body.location;
     const reviewed = req.body.reviewed;
     const postedBy = req.body.postedBy;
     const reward = req.body.reward;
 
-    const newJob = new Job({title, description, duration, date, tags, location, reviewed, postedBy, reward});
+    const newJob = new Job({title, description, duration, phone, date, tags, location, reviewed, postedBy, reward});
     newJob.save()
         .then(() => res.json('Job added!'))
         .catch(err => res.status(400).json('Error:' + err));
