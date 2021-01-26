@@ -4,9 +4,10 @@ const bcrypt = require('bcryptjs');
 let User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
+const config = require('../config')
 const {OAuth2Client} = require('google-auth-library');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+const client = new OAuth2Client(config.googleClientId)
 
 // @route POST /api/auth/
 // @desc Login
@@ -36,7 +37,7 @@ router.post('/', (req, res) => {
                     if (!isMatch) return res.status(400).json({message: 'Nume sau parolă incorecte'});
                     jwt.sign(
                         {id: user.id},
-                        process.env.jwtSecret,
+                        config.jwtSecret,
                         {expiresIn: '1d'},
                         (err, token) => {
                             if (err) throw err;
@@ -58,7 +59,7 @@ router.post('/', (req, res) => {
 
 router.post('/googlelogin', (req, res) => {
     const {tokenId} = req.body;
-    client.verifyIdToken({idToken: tokenId, audience: process.env.GOOGLE_CLIENT_ID})
+    client.verifyIdToken({idToken: tokenId, audience: config.googleClientId})
         .then(response => {
             const {email_verified, name, email} = response.payload
             if (!email_verified) return res.status(400).json({message: "Email-ul nu a fost confirmat încă"})
@@ -67,7 +68,7 @@ router.post('/googlelogin', (req, res) => {
                     if (user) {
                         jwt.sign(
                             {id: user.id},
-                            process.env.jwtSecret,
+                            config.jwtSecret,
                             {expiresIn: '1d'},
                             (err, token) => {
                                 if (err) throw err;
@@ -80,7 +81,7 @@ router.post('/googlelogin', (req, res) => {
                             }
                         )
                     } else {
-                        let password = email + process.env.jwtSecret;
+                        let password = email + config.jwtSecret;
                         let newUser = new User({name, email, password, confirmed_email: email_verified})
                         // Create salt & hash
                         bcrypt.genSalt(10, (err, salt) => {
@@ -90,7 +91,7 @@ router.post('/googlelogin', (req, res) => {
                                 await newUser.save()
                                 jwt.sign(
                                     {id: newUser.id},
-                                    process.env.jwtSecret,
+                                    config.jwtSecret,
                                     {expiresIn: '1d'},
                                     (err, token) => {
                                         if (err) throw err;

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const config = require('../config')
 // @route UPDATE api/activation/user/id
 // @desc Activate user by ID
 // @access Public
@@ -18,7 +19,7 @@ router.post('/user/:id', async (req, res) => {
         await user.save()
         jwt.sign(
             {id: user.id},
-            process.env.jwtSecret,
+            config.jwtSecret,
             {expiresIn: '1d'},
             (err, token) => {
                 if (err) throw err;
